@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>example1</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.min.js"></script>
+</head>
+
+<body>
+    <script>
+        // Pythagoras tree
+
+        console.log("Pythagoras tree");
+
+        let counter = 0;
+        let step = 0;
+
+        function setup() {
+            createCanvas(400, 400);
+            background(220);
+            angleMode(DEGREES);
+        }
+
+        function draw() {
+            drawLine(-400, 400, 800, 0);
+            step = 0;
+            counter++;
+        }
+
+        function drawLine(x, y, length, direction) {
+            if (length > 4) {
+                xnew = x + length * cos(direction);
+                ynew = y + length * sin(direction);
+                if (counter == step) {
+                    line(x, y, xnew, ynew);
+                }
+                step++;
+                drawLine(xnew, ynew, length / 2, direction + 240);
+                drawLine(xnew, ynew, length / 2, direction + 120);
+                drawLine(xnew, ynew, length / 2, direction);
+            }
+
+        }
+    </script>
+</body>
+
+</html>
