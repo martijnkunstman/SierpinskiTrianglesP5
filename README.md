@@ -9,7 +9,7 @@ Cellular automata : rule 90\
 Arrowhead Curve\
 Recursive function\
 Shrinking and duplication\
-Finite subdivision rule\
+Finite subdivision rule
 
 https://martijnkunstman.github.io/SierpinskiTrianglesP5/
 
