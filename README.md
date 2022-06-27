@@ -1,5 +1,16 @@
 # SierpinskiTrianglesP5
 
-6 completely different algorithms to create a SierpinskiTriangle using P5
+8 algorithms to create a SierpinskiTriangle
+
+Pascals triangle
+Pascals triangle
+Pythagoras tree
+Cellular automata : rule 90
+Arrowhead Curve
+Recursive function
+Shrinking and duplication
+Finite subdivision rule
 
 https://martijnkunstman.github.io/SierpinskiTrianglesP5/
+
+(examples are using p5.js https://p5js.org/)
