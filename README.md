@@ -2,7 +2,7 @@
 
 8 algorithms to create a SierpinskiTriangle
 
-Pascals triangle
+Chaos Game
 Pascals triangle
 Pythagoras tree
 Cellular automata : rule 90
