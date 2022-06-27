@@ -25,7 +25,7 @@ function draw() {
         newItems.push({ x: item.x + item.width / 2, y: item.y + item.width / 2, width: item.width / 2 });
     });
     items = newItems;
-    if (level > 10) {
+    if (level > 8) {
         noLoop();
     }
 }
