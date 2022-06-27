@@ -9,6 +9,7 @@ function setup() {
     createCanvas(400, 400);
     background(220);
     fill(0);
+    noStroke();
     frameRate(1);
     text("Shrinking and duplication", 10, 20);
 }
