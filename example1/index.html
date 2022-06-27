@@ -6,42 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>example1</title>
-    <style>body{margin:0;padding:0;overflow:hidden;}</style>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.min.js"></script>
+    <script src="main.js" defer></script>
 </head>
 
 <body>
-    <script>
-        // Chaos Game
-        
-        console.log("Chaos Game");
-        
-        let points = [{
-            x: 200,
-            y: 0
-        }, {
-            x: 0,
-            y: 400
-        }, {
-            x: 400,
-            y: 400
-        }];
-        let x = 200;
-        let y = 200;
-
-        function setup() {
-            createCanvas(400, 400);
-            background(220);
-            text('Chaos Game', 10, 20);
-        }
-
-        function draw() {
-            let target = random(points);
-            x = x - (x - target.x) / 2;
-            y = y - (y - target.y) / 2;
-            point(x, y);
-        }
-    </script>
 </body>
 
 </html>
