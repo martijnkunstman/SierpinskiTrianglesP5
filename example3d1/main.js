@@ -8,7 +8,7 @@ var vertices = [];
 var current = new THREE.Vector3(0, 0, 0);
 var positions = [];
 var maxPoints = 50000;
-var batchSize = 200;
+var batchSize = 40;
 
 function init() {
     scene = new THREE.Scene();
@@ -110,9 +110,30 @@ function addPoints() {
     posAttr.needsUpdate = true;
     colAttr.needsUpdate = true;
 }
+var startTime = 0;
 
-function animate() {
+function animate(time) {
     requestAnimationFrame(animate);
+
+    if (startTime === 0) startTime = time;
+
+    // After 10 seconds, clear everything and start over
+    if (time - startTime > 10000) {
+        // Zero out buffers so old points disappear
+        var posAttr = pointsGeo.attributes.position;
+        var colAttr = pointsGeo.attributes.color;
+        for (var i = 0; i < posAttr.array.length; i++) {
+            posAttr.array[i] = 0;
+            colAttr.array[i] = 0;
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        pointCount = 0;
+        current.set(0, 0, 0);
+        pointsGeo.setDrawRange(0, 0);
+        startTime = time;
+    }
+
     addPoints();
     controls.update();
     renderer.render(scene, camera);
