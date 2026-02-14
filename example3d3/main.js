@@ -9,7 +9,7 @@ var maxCounter = 0;
 
 function init() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x111111);
+    scene.background = new THREE.Color(0xdcdcdc);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 3, 6);
@@ -22,6 +22,9 @@ function init() {
     controls.enableDamping = true;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 1.0;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = false;
     controls.target.set(0, 2, 0);
 
     // Build all branches recursively
@@ -43,9 +46,8 @@ function buildTree(origin, direction, length, depth) {
 
     var end = new THREE.Vector3().copy(origin).addScaledVector(direction, length);
 
-    // Color by depth
-    var color = new THREE.Color();
-    color.setHSL(depth / 10, 0.9, 0.5);
+    var lightness = 0.15 + (depth / 10) * 0.4;
+    var color = new THREE.Color(lightness, lightness, lightness);
 
     lines.push({
         start: origin.clone(),

@@ -12,7 +12,7 @@ var batchSize = 40;
 
 function init() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x111111);
+    scene.background = new THREE.Color(0xdcdcdc);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(3, 3, 3);
@@ -25,6 +25,9 @@ function init() {
     controls.enableDamping = true;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 1.0;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = false;
 
     // Tetrahedron vertices
     var s = 2;
@@ -35,7 +38,7 @@ function init() {
 
     // Draw vertex markers
     var markerGeo = new THREE.SphereGeometry(0.05, 8, 8);
-    var markerMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
+    var markerMat = new THREE.MeshBasicMaterial({ color: 0x333333 });
     vertices.forEach(function (v) {
         var m = new THREE.Mesh(markerGeo, markerMat);
         m.position.copy(v);
@@ -51,7 +54,7 @@ function init() {
         wirePositions.push(vertices[pair[1]].x, vertices[pair[1]].y, vertices[pair[1]].z);
     });
     wireGeo.setAttribute('position', new THREE.Float32BufferAttribute(wirePositions, 3));
-    var wireMat = new THREE.LineBasicMaterial({ color: 0x333333 });
+    var wireMat = new THREE.LineBasicMaterial({ color: 0x999999 });
     scene.add(new THREE.LineSegments(wireGeo, wireMat));
 
     // Points buffer
@@ -74,10 +77,10 @@ function init() {
 
 var pointCount = 0;
 var colors = [
-    new THREE.Color(0x00ffcc),
-    new THREE.Color(0xff00cc),
-    new THREE.Color(0xccff00),
-    new THREE.Color(0x00ccff)
+    new THREE.Color(0x222222),
+    new THREE.Color(0x444444),
+    new THREE.Color(0x333333),
+    new THREE.Color(0x555555)
 ];
 
 function addPoints() {

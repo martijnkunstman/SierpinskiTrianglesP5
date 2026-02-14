@@ -13,7 +13,7 @@ var addedMeshes = [];
 
 function init() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x111111);
+    scene.background = new THREE.Color(0xdcdcdc);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(4, 3, 4);
@@ -26,6 +26,9 @@ function init() {
     controls.enableDamping = true;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 1.0;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = false;
 
     // Lighting
     var ambientLight = new THREE.AmbientLight(0x404040);
@@ -100,7 +103,8 @@ function createTetrahedronMesh(verts, colorHue) {
     geo.computeVertexNormals();
 
     var color = new THREE.Color();
-    color.setHSL(colorHue, 0.8, 0.5);
+    var lightness = 0.2 + colorHue * 0.4;
+    color.setRGB(lightness, lightness, lightness);
     var mat = new THREE.MeshPhongMaterial({
         color: color,
         side: THREE.DoubleSide,

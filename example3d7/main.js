@@ -10,7 +10,7 @@ var group;
 
 function init() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x111111);
+    scene.background = new THREE.Color(0xdcdcdc);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(2.7, 2.7, 2.7);
@@ -21,6 +21,9 @@ function init() {
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = false;
 
     // Lighting
     var ambientLight = new THREE.AmbientLight(0x505050);
@@ -52,9 +55,8 @@ function drawCurrentLevel() {
     // Center offset
     items.forEach(function (item) {
         var geo = new THREE.BoxGeometry(item.size * 0.95, item.size * 0.95, item.size * 0.95);
-        var hue = (item.x + item.y + item.z + 5) / 10;
-        var color = new THREE.Color();
-        color.setHSL(hue % 1, 0.7, 0.5);
+        var lightness = 0.2 + ((item.x + item.y + item.z + 5) / 10 % 1) * 0.4;
+        var color = new THREE.Color(lightness, lightness, lightness);
         var mat = new THREE.MeshPhongMaterial({
             color: color,
             transparent: true,

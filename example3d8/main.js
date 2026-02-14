@@ -11,7 +11,7 @@ var group;
 
 function init() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x111111);
+    scene.background = new THREE.Color(0xdcdcdc);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(4, 3, 4);
@@ -22,6 +22,9 @@ function init() {
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = false;
 
     // Lighting
     var ambientLight = new THREE.AmbientLight(0x404040);
@@ -106,9 +109,9 @@ function drawTetrahedra() {
 
         // Color by position
         var center = new THREE.Vector3().add(v[0]).add(v[1]).add(v[2]).add(v[3]).divideScalar(4);
-        var hue = (Math.atan2(center.z, center.x) / Math.PI + 1) / 2;
-        var color = new THREE.Color();
-        color.setHSL(hue, 0.75, 0.5);
+        var posVal = (Math.atan2(center.z, center.x) / Math.PI + 1) / 2;
+        var lightness = 0.2 + posVal * 0.4;
+        var color = new THREE.Color(lightness, lightness, lightness);
 
         var mat = new THREE.MeshPhongMaterial({
             color: color,

@@ -26,7 +26,7 @@ function init() {
     buildCurve();
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x111111);
+    scene.background = new THREE.Color(0xdcdcdc);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 3, 5);
@@ -39,6 +39,9 @@ function init() {
     controls.enableDamping = true;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 1.0;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = false;
 
     // Generate curve points in 3D
     // In 2D, turns are ±60°. In 3D, we alternate rotation axes
@@ -104,9 +107,8 @@ function init() {
         positions.push(points[j].x, points[j].y, points[j].z);
         positions.push(points[j + 1].x, points[j + 1].y, points[j + 1].z);
 
-        var hue = j / totalPts;
-        var c = new THREE.Color();
-        c.setHSL(hue, 0.9, 0.55);
+        var lightness = 0.15 + (j / totalPts) * 0.4;
+        var c = new THREE.Color(lightness, lightness, lightness);
         colors.push(c.r, c.g, c.b);
         colors.push(c.r, c.g, c.b);
     }

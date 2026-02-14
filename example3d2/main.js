@@ -25,7 +25,7 @@ function init() {
     }
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x111111);
+    scene.background = new THREE.Color(0xdcdcdc);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, -2, 8);
@@ -38,6 +38,9 @@ function init() {
     controls.enableDamping = true;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 1.0;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.enableRotate = false;
 
     // Lighting
     var ambientLight = new THREE.AmbientLight(0x404040);
@@ -78,8 +81,8 @@ function init() {
                 instancedMesh.setMatrixAt(idx, dummy.matrix);
 
                 // Color based on row depth
-                var hue = rowIndex / totalRows;
-                color.setHSL(hue, 0.8, 0.55);
+                var lightness = 0.2 + (rowIndex / totalRows) * 0.3;
+                color.setRGB(lightness, lightness, lightness);
                 instancedMesh.setColorAt(idx, color);
                 idx++;
             }
