@@ -6,7 +6,10 @@ var scene, camera, renderer, controls;
 var level = 5;
 var tetrahedra = [];
 var drawnCount = 0;
-var batchSize = 5;
+var batchSize = 3;
+var restartPending = false;
+var restartTime = 0;
+var addedMeshes = [];
 
 function init() {
     scene = new THREE.Scene();
@@ -124,8 +127,23 @@ function animate() {
             var hue = (Math.atan2(center.z, center.x) / Math.PI + 1) / 2;
             var mesh = createTetrahedronMesh(t.vertices, hue);
             scene.add(mesh);
+            addedMeshes.push(mesh);
         }
         drawnCount = end;
+        if (drawnCount >= tetrahedra.length) {
+            restartPending = true;
+            restartTime = performance.now() + 3000;
+        }
+    } else if (restartPending && performance.now() > restartTime) {
+        // Remove all drawn meshes and restart
+        addedMeshes.forEach(function (m) {
+            scene.remove(m);
+            if (m.geometry) m.geometry.dispose();
+            if (m.material) m.material.dispose();
+        });
+        addedMeshes = [];
+        drawnCount = 0;
+        restartPending = false;
     }
 
     controls.update();
