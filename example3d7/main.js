@@ -13,7 +13,7 @@ function init() {
     scene.background = new THREE.Color(0x111111);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(4, 4, 4);
+    camera.position.set(2.7, 2.7, 2.7);
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -69,37 +69,52 @@ function drawCurrentLevel() {
         group.add(mesh);
     });
 
-    // Center the group
+    // Calculate center target for smooth centering
     var box = new THREE.Box3().setFromObject(group);
     var center = new THREE.Vector3();
     box.getCenter(center);
-    group.position.sub(center);
+    centerTarget.copy(group.position).sub(center);
 }
 
 var nextStepTime = 0;
-var stepInterval = 1500; // ms between levels
+var stepInterval = 2250; // ms between levels (1.5x of original 1500)
+var restartPending = false;
+var restartTime = 0;
+var centerTarget = new THREE.Vector3();
+var initialItems = [{ x: 0, y: 0, z: 0, size: 3 }];
 
 function animate(time) {
     requestAnimationFrame(animate);
 
-    if (time > nextStepTime && level < maxLevel) {
+    if (restartPending && time > restartTime) {
+        // Reset to initial state
+        level = 0;
+        items = [{ x: 0, y: 0, z: 0, size: 3 }];
+        drawCurrentLevel();
+        restartPending = false;
+        nextStepTime = time + stepInterval;
+    } else if (!restartPending && time > nextStepTime && level < maxLevel) {
         // Shrink and duplicate — 3D version
-        // Each cube at (x,y,z,size) → 4 cubes at half size:
-        // Bottom-left-front, Bottom-right-front, Bottom-left-back, Top-center
         var newItems = [];
         items.forEach(function (item) {
             var half = item.size / 2;
-            // 4 copies arranged like tetrahedron vertices
-            newItems.push({ x: item.x, y: item.y, z: item.z, size: half }); // bottom-front-left
-            newItems.push({ x: item.x + half, y: item.y, z: item.z, size: half }); // bottom-front-right
-            newItems.push({ x: item.x + half / 2, y: item.y, z: item.z + half, size: half }); // bottom-back-center
-            newItems.push({ x: item.x + half / 2, y: item.y + half, z: item.z + half / 2, size: half }); // top-center
+            newItems.push({ x: item.x, y: item.y, z: item.z, size: half });
+            newItems.push({ x: item.x + half, y: item.y, z: item.z, size: half });
+            newItems.push({ x: item.x + half / 2, y: item.y, z: item.z + half, size: half });
+            newItems.push({ x: item.x + half / 2, y: item.y + half, z: item.z + half / 2, size: half });
         });
         items = newItems;
         level++;
         drawCurrentLevel();
         nextStepTime = time + stepInterval;
+        if (level >= maxLevel) {
+            restartPending = true;
+            restartTime = time + stepInterval;
+        }
     }
+
+    // Smooth centering — lerp group position toward target
+    group.position.lerp(centerTarget, 0.05);
 
     // Gentle rotation
     if (group) {
