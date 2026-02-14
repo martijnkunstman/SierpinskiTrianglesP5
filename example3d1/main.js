@@ -110,28 +110,26 @@ function addPoints() {
     posAttr.needsUpdate = true;
     colAttr.needsUpdate = true;
 }
-var startTime = 0;
+var startTime = performance.now();
 
-function animate(time) {
+function animate() {
     requestAnimationFrame(animate);
 
-    if (startTime === 0) startTime = time;
+    var now = performance.now();
 
     // After 10 seconds, clear everything and start over
-    if (time - startTime > 10000) {
+    if (now - startTime > 10000) {
         // Zero out buffers so old points disappear
         var posAttr = pointsGeo.attributes.position;
         var colAttr = pointsGeo.attributes.color;
-        for (var i = 0; i < posAttr.array.length; i++) {
-            posAttr.array[i] = 0;
-            colAttr.array[i] = 0;
-        }
+        posAttr.array.fill(0);
+        colAttr.array.fill(0);
         posAttr.needsUpdate = true;
         colAttr.needsUpdate = true;
         pointCount = 0;
         current.set(0, 0, 0);
         pointsGeo.setDrawRange(0, 0);
-        startTime = time;
+        startTime = now;
     }
 
     addPoints();
