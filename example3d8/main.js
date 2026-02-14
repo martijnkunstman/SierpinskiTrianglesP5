@@ -123,16 +123,35 @@ function drawTetrahedra() {
 }
 
 var nextStepTime = 0;
-var stepInterval = 2000;
+var stepInterval = 3000;
+var restartPending = false;
+var restartTime = 0;
+var initialSize = 2.5;
 
 function animate(time) {
     requestAnimationFrame(animate);
 
-    if (time > nextStepTime && level < maxLevel) {
+    if (restartPending && time > restartTime) {
+        // Reset to initial state
+        level = 0;
+        tetrahedra = [{
+            p1: new THREE.Vector3(initialSize, initialSize, initialSize),
+            p2: new THREE.Vector3(initialSize, -initialSize, -initialSize),
+            p3: new THREE.Vector3(-initialSize, initialSize, -initialSize),
+            p4: new THREE.Vector3(-initialSize, -initialSize, initialSize)
+        }];
+        drawTetrahedra();
+        restartPending = false;
+        nextStepTime = time + stepInterval;
+    } else if (!restartPending && time > nextStepTime && level < maxLevel) {
         subdivide();
         drawTetrahedra();
         level++;
         nextStepTime = time + stepInterval;
+        if (level >= maxLevel) {
+            restartPending = true;
+            restartTime = time + stepInterval;
+        }
     }
 
     // Gentle rotation
