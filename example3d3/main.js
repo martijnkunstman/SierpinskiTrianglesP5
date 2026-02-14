@@ -11,8 +11,16 @@ function init() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xdcdcdc);
 
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 3, 6);
+    var aspect = window.innerWidth / window.innerHeight;
+    var frustumSize = 5;
+    camera = new THREE.OrthographicCamera(
+        frustumSize * aspect / -2, frustumSize * aspect / 2,
+        frustumSize / 2, frustumSize / -2,
+        0.1, 1000
+    );
+    // Top-down view
+    camera.position.set(0, 10, 0);
+    camera.lookAt(0, 0, 0);
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -21,11 +29,15 @@ function init() {
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.autoRotate = true;
-    controls.autoRotateSpeed = 1.0;
+    controls.autoRotateSpeed = 2.0;
     controls.enableZoom = false;
     controls.enablePan = false;
     controls.enableRotate = false;
-    controls.target.set(0, 2, 0);
+    controls.target.set(0, 0, 0);
+
+    // Group to hold tree lines (easy to clear)
+    treeGroup = new THREE.Group();
+    scene.add(treeGroup);
 
     // Build all branches recursively
     buildTree(
@@ -35,14 +47,15 @@ function init() {
         0
     );
 
-    maxCounter = lines.length;
+    // Sort lines by depth for BFS animation (step-by-step growth)
+    lines.sort(function (a, b) { return a.depth - b.depth; });
 
     window.addEventListener('resize', onResize);
     animate();
 }
 
 function buildTree(origin, direction, length, depth) {
-    if (length < 0.05 || depth > 10) return;
+    if (length < 0.04 || depth > 12) return; // Optimized: stop when lines are too small (~8px)
 
     var end = new THREE.Vector3().copy(origin).addScaledVector(direction, length);
 
@@ -91,22 +104,41 @@ function buildTree(origin, direction, length, depth) {
 }
 
 var drawnCount = 0;
-var batchSize = 50;
+var batchSize = 5; // Slow down to show steps clearly
+var restartPending = false;
+var restartTime = 0;
+var treeGroup;
 
 function animate() {
     requestAnimationFrame(animate);
 
-    // Progressively add lines
-    if (drawnCount < lines.length) {
-        var end = Math.min(drawnCount + batchSize, lines.length);
-        for (var i = drawnCount; i < end; i++) {
-            var l = lines[i];
-            var geo = new THREE.BufferGeometry().setFromPoints([l.start, l.end]);
-            var mat = new THREE.LineBasicMaterial({ color: l.color });
-            var line = new THREE.Line(geo, mat);
-            scene.add(line);
+    var now = performance.now();
+
+    if (restartPending) {
+        if (now > restartTime) {
+            // Restart
+            treeGroup.clear(); // Clear all lines
+            drawnCount = 0;
+            restartPending = false;
         }
-        drawnCount = end;
+    } else {
+        // Progressively add lines (sorted by depth)
+        if (drawnCount < lines.length) {
+            var end = Math.min(drawnCount + batchSize, lines.length);
+            for (var i = drawnCount; i < end; i++) {
+                var l = lines[i];
+                var geo = new THREE.BufferGeometry().setFromPoints([l.start, l.end]);
+                var mat = new THREE.LineBasicMaterial({ color: l.color });
+                var line = new THREE.Line(geo, mat);
+                treeGroup.add(line);
+            }
+            drawnCount = end;
+
+            if (drawnCount >= lines.length) {
+                restartPending = true;
+                restartTime = now + 4000; // Wait 4 seconds before restart
+            }
+        }
     }
 
     controls.update();
@@ -114,7 +146,12 @@ function animate() {
 }
 
 function onResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    var aspect = window.innerWidth / window.innerHeight;
+    var frustumSize = 5;
+    camera.left = -frustumSize * aspect / 2;
+    camera.right = frustumSize * aspect / 2;
+    camera.top = frustumSize / 2;
+    camera.bottom = -frustumSize / 2;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
